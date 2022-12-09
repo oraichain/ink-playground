@@ -1,4 +1,4 @@
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import App from './app';
 import './style/fonts.css';
 import './style/tailwind.css';
@@ -10,4 +10,5 @@ if (envs.NODE_ENV === 'development') {
   console.log('Development env vars:', JSON.stringify(envs, null, 2));
 }
 
-ReactDOM.render(<App />, document.getElementById('container'));
+const root = createRoot(document.getElementById('container')!);
+root.render(<App />);

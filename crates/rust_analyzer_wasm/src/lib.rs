@@ -125,7 +125,7 @@ impl WorldState {
     }
 
     pub fn update(&mut self, code: String) -> JsValue {
-        log::warn!("update");
+        // log::warn!("update");
         init_panic_hook();
         let mut change = Change::new();
         change.change_file(self.file_id, Some(Arc::new(code)));
@@ -480,6 +480,9 @@ impl WorldState {
         let analysis = self.analysis();
         let line_index = analysis.file_line_index(self.file_id).unwrap();
         let mut config = DiagnosticsConfig::default();
+        config.proc_macros_enabled = false;
+        config.disable_experimental = true;
+        config.proc_attr_macros_enabled = false;
         config.disabled.insert("unresolved-macro-call".to_string());
         let diagnostics: Vec<_> = analysis
             .diagnostics(&config, AssistResolveStrategy::None, self.file_id)

@@ -40,17 +40,21 @@ export const startRustAnalyzer = async (uri: Uri) => {
   const textData = await data.text();
   const encoder = new TextEncoder();
   const bufferData = encoder.encode(textData);
-  await worldState.load(bufferData);
+  worldState.load(bufferData);
 
+  let timer: NodeJS.Timer;
   async function update() {
     if (!model) return;
-    const text = model.getValue();
-    const res = await worldState.update(text);
-    monaco.editor.setModelMarkers(model, modeId, res.diagnostics);
-    allTokens.length = 0;
-    allTokens.push(...res.highlights);
-    monaco.editor.setTheme('custom-dark');
-    setTokens(allTokens);
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      const text = model.getValue();
+      const res = await worldState.update(text);
+      monaco.editor.setModelMarkers(model, modeId, res.diagnostics);
+      allTokens.length = 0;
+      allTokens.push(...res.highlights);
+      monaco.editor.setTheme('custom-dark');
+      setTokens(allTokens);
+    }, 500);
   }
 
   await update();

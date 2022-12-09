@@ -36,6 +36,7 @@ Features:
 Before proceeding you need to configure the following environment variables (either on your terminal or better persist them into your `.zshrc` file):
 
 ```
+brew reinstall z3
 export PATH="/usr/local/opt/llvm/bin/:$PATH"
 export CC=/usr/local/opt/llvm/bin/clang
 export AR=/usr/local/opt/llvm/bin/llvm-ar

@@ -1,54 +1,38 @@
-#![cfg_attr(not(feature = "std"), no_std)]
+use cosmwasm_schema::cw_serde;
+use cosmwasm_std::{
+    entry_point, to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
+};
 
-#[ink::contract]
-pub mod flipper {
-    #[ink(storage)]
-    pub struct Flipper {
-        value: bool,
+#[cw_serde]
+pub struct InstantiateMsg {}
+
+#[cw_serde]
+pub enum ExecuteMsg {}
+
+// Note, you can use StdResult in some functions where you do not
+// make use of the custom errors
+pub fn instantiate(
+    _deps: DepsMut,
+    _env: Env,
+    _info: MessageInfo,
+    _: InstantiateMsg,
+) -> StdResult<Response> {
+    Ok(Response::default())
+}
+
+// And declare a custom Error variant for the ones where you will want to make use of it
+#[cfg_attr(not(feature = "library"), entry_point)]
+pub fn execute(_: DepsMut, _env: Env, _: MessageInfo, _: ExecuteMsg) -> Result<Response> {
+    Ok(Response::default())
+}
+
+#[cfg_attr(not(feature = "library"), entry_point)]
+pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
+    match msg {
+        QueryMsg::Get { input } => to_binary(&query_data(deps, input)?),
     }
+}
 
-    impl Flipper {
-        /// Creates a new flipper smart contract initialized with the given value.
-        #[ink(constructor)]
-        pub fn new(init_value: bool) -> Self {
-            Self { value: init_value }
-        }
-
-        /// Creates a new flipper smart contract initialized to `false`.
-        #[ink(constructor)]
-        pub fn default() -> Self {
-            Self::new(Default::default())
-        }
-
-        /// Flips the current value of the Flipper's boolean.
-        #[ink(message)]
-        pub fn flip(&mut self) {
-            self.value = !self.value;
-        }
-
-        /// Returns the current value of the Flipper's boolean.
-        #[ink(message)]
-        pub fn get(&self) -> bool {
-            self.value
-        }
-    }
-
-    #[cfg(test)]
-    mod tests {
-        use super::*;
-
-        #[ink::test]
-        fn default_works() {
-            let flipper = Flipper::default();
-            assert!(!flipper.get());
-        }
-
-        #[ink::test]
-        fn it_works() {
-            let mut flipper = Flipper::new(false);
-            assert!(!flipper.get());
-            flipper.flip();
-            assert!(flipper.get());
-        }
-    }
+fn query_data(deps: Deps, input: String) -> StdResult<String> {
+    Ok(String::new())
 }
