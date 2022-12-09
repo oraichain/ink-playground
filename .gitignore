@@ -22,3 +22,6 @@ packages/_generated/src
 coverage
 data
 config/data
+
+hosting.*.cache
+.firebase/

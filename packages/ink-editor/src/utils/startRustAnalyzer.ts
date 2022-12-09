@@ -27,6 +27,7 @@ export const startRustAnalyzer = async (uri: Uri) => {
   monaco.languages.setLanguageConfiguration('rust', rustConf.conf);
   monaco.languages.setMonarchTokensProvider('rust', rustConf.language);
   monaco.languages.setLanguageConfiguration(modeId, rustConf.conf);
+  monaco.editor.setTheme('custom-dark');
 
   const worldState = await Comlink.wrap<WorkerApi>(
     new Worker(new URL('./wasm.worker', import.meta.url), {
@@ -42,19 +43,13 @@ export const startRustAnalyzer = async (uri: Uri) => {
   const bufferData = encoder.encode(textData);
   worldState.load(bufferData);
 
-  let timer: NodeJS.Timer;
   async function update() {
     if (!model) return;
-    clearTimeout(timer);
-    timer = setTimeout(async () => {
-      const text = model.getValue();
-      const res = await worldState.update(text);
-      monaco.editor.setModelMarkers(model, modeId, res.diagnostics);
-      allTokens.length = 0;
-      allTokens.push(...res.highlights);
-      monaco.editor.setTheme('custom-dark');
-      setTokens(allTokens);
-    }, 500);
+    const text = model.getValue();
+    const res = await worldState.update(text);
+    monaco.editor.setModelMarkers(model, modeId, res.diagnostics);
+    allTokens.length = 0;
+    allTokens.push(...res.highlights);
   }
 
   await update();
